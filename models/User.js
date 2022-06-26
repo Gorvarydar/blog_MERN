@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 
+
 const UserShema = new mongoose.Schema({
     fullName:{
         type:String,
@@ -21,4 +22,4 @@ const UserShema = new mongoose.Schema({
     }
 )
 
-export  default mongoose.Schema('User', UserShema)
+export  default mongoose.model('User', UserShema)
