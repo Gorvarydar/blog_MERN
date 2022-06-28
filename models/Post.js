@@ -8,19 +8,19 @@ const PostShema = new mongoose.Schema({
     text: {
         type:String,
         required:true,
-        unique:true
+        
     },
     tags: {
         type:Array,
         default:[]
     },
     viewsCount: {
-        type:String,
+        type:Number,
         requred:true,
         default:0
     },
     user: {
-        type:ObjectId,
+        type:mongoose.Schema.Types.ObjectId,
         ref:'User',
         requred:true
     },
