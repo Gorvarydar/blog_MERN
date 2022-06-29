@@ -86,8 +86,6 @@ class PostController {
         } catch (err) {
             res.status(403).json({message:'error request'})
         }
-       
-
     }
 
     async  removePost (req, res) {
@@ -114,8 +112,6 @@ class PostController {
         } catch (err) {
             res.status(403).json({message:'delete error request'})
         }
-       
-
     }
 }
 
