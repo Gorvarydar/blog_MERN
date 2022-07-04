@@ -24,7 +24,7 @@ const PostShema = new mongoose.Schema({
         ref:'User',
         requred:true
     },
-    postUrl:String
+    imageUrl:String
 },
     {
         timestamps:true

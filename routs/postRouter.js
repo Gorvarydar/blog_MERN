@@ -7,6 +7,7 @@ const router = new Router()
 
 router.post('/', checkAuth, createPostValidation, PostController.createPost)
 router.get('/',  PostController.getAll)
+router.get('/tags',  PostController.getTags)
 router.get('/:id',  PostController.getOne)
 router.delete('/:id', checkAuth, PostController.removePost)
 router.patch('/:id',checkAuth, PostController.updatePost)

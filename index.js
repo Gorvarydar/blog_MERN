@@ -3,8 +3,10 @@ import mongoose from 'mongoose'
 import multer from 'multer'
 import postRouter from './routs/postRouter.js'
 import authRouter from './routs/authRouter.js'
+import cors from 'cors'
 
 const app = express()
+app.use(cors())
 
 mongoose.connect('mongodb+srv://cloud:cloud@cluster0.ubakr.mongodb.net/blog?retryWrites=true&w=majority')
     .then(console.log('bD is ok'))
@@ -13,7 +15,8 @@ mongoose.connect('mongodb+srv://cloud:cloud@cluster0.ubakr.mongodb.net/blog?retr
     }))
 
 app.use(express.json())
-app.use('/upload', express.static('uploads'))
+app.use('/uploads', express.static('uploads'))
+
 const storage = multer.diskStorage({
     destination: (_, __, cb) => {
         cb(null, "uploads")
@@ -23,13 +26,20 @@ const storage = multer.diskStorage({
     }
 })
 const upload = multer({storage})
+
 app.post('/upload', upload.single('image'), (req, res) => {
-    console.log(req.file.originalname)
-    res.json({
-       url:`/uploads/${req.file.originalname}`
-    })
+    try{
+        console.log(req.file.originalname)
+        console.log('uploads req')
+        res.json({
+        url:`/uploads/${req.file.originalname}`
+    }) 
+    } catch (err) {
+        res.status(400).json({message:'cann not upload file'})
+    }
 })
 
+// app.use('/upload',fileRouter)
 app.use('/post', postRouter)
 app.use('/auth', authRouter)
 

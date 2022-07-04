@@ -9,8 +9,9 @@ class PostController {
                 tags:req.body.tags,
                 viewsCount:req.body.viewsCount,
                 user:req.userId,
-                postUrl:req.body.postUrl,
+                imageUrl:req.body.imageUrl,
             })
+            console.log(req.body)
            const post = await doc.save()
            res.json(post)
 
@@ -34,7 +35,7 @@ class PostController {
                 tags:req.body.tags,
                 viewsCount:req.body.viewsCount,
                 user:req.userId,
-                postUrl:req.body.postUrl,
+                imageUrl:req.body.imageUrl,
             })
            
            res.json({message:'updated post'})
@@ -44,6 +45,15 @@ class PostController {
             res.status(403).json({message:'can not create a post'})
 
         }
+    }
+    async getTags (req, res) {
+        try{
+            const posts = await PostModel.find().limit(5).exec()
+            const tags = posts.map(i => i.tags).flat().slice(0, 5)
+            res.json(tags)
+         } catch (err) {
+             res.status(403).json({message:"tags didnt find"})
+         }
     }
 
     async getAll (req, res) {
@@ -81,7 +91,7 @@ class PostController {
                 }
                res.json(doc) 
             } 
-        ) 
+        ).populate('user')
       
         } catch (err) {
             res.status(403).json({message:'error request'})
@@ -113,6 +123,8 @@ class PostController {
             res.status(403).json({message:'delete error request'})
         }
     }
+
+    
 }
 
 export default new PostController
