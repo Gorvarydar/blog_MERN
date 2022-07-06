@@ -12,8 +12,8 @@ class PostController {
                 imageUrl:req.body.imageUrl,
             })
             console.log(req.body)
-           const post = await doc.save()
-           res.json(post)
+            const post = await doc.save()
+            res.json(post)
 
         } catch (err) {
             console.log(err, 'badreq')
@@ -58,13 +58,28 @@ class PostController {
 
     async getAll (req, res) {
         try{
-           const posts = await PostModel.find().populate('user').exec()
+            const {type} = req.query
+            console.log(req, 'this is type')
+           const posts = await PostModel.find({}).sort({createdAt:'descending'}).populate('user').exec()
            console.log(posts) 
            res.json(posts)
         } catch (err) {
             res.status(403).json({message:"post didnt find"})
         }
     }
+
+    // async getFiles (req, res) => {
+    //     try{
+    //         const {sort} = req.query
+    //         let postsFiles
+    //         switch(sort) {
+    //             case 'new':
+    //                 files = 
+    //         }
+    //     }catch(err) {
+
+    //     }
+    // }
 
    async  getOne (req, res) {
         try{

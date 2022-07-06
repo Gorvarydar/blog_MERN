@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Grid from '@mui/material/Grid';
@@ -7,28 +7,61 @@ import { TagsBlock } from '../components/TagsBlock';
 import { CommentsBlock } from '../components/CommentsBlock';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchPosts, fetchTags } from '../redux/slices/posts';
+import { useState } from 'react';
+import { useMemo } from 'react';
 
 export const Home = () => {
   const dispatch = useDispatch()
   const {posts, tags, imageUrl} = useSelector(state => state.posts)
   const userData = useSelector(state => state.auth.data)
-  console.log(imageUrl, 'from home img')
+  const [sort, setSort] = useState(false)
+  const [value, setValue] = useState('one');
+
+  const sortedPosts = useMemo(() => {
+    const sortArr = [...posts.items]
+    sortArr.sort(function(e, i) {
+      if(e.viewsCount > i.viewsCount) {
+        return -1
+      }else if(e.viewsCount < i.viewsCount) {
+        return 1
+      }
+        return 0
+      })
+      return sortArr
+  },[sort,posts])
+
+ console.log(sortedPosts)
+  const getSortedPosts = () => {
+    setSort(true)
+  }
+  const getNewPosts =() => {
+     setSort(false)
+  }
 
   useEffect(() => {
    dispatch(fetchPosts())
    dispatch(fetchTags())
+   setSort(false)
   },[])
-const isPostLoading = posts.status === 'loading'
-const isTagsLoading =  tags.status === 'loading'
+
+  const sorPosts = sort ? sortedPosts : posts.items
+  console.log(sorPosts, 'new sort')
+
+  const isPostLoading = posts.status === 'loading'
+  const isTagsLoading =  tags.status === 'loading'
+
+  const handleChange = ( e,newValue) => {
+    setValue(newValue);
+  };
   return (
     <>
-      <Tabs style={{ marginBottom: 15 }} value={0} aria-label="basic tabs example">
-        <Tab label="Новые" />
-        <Tab label="Популярные" />
+      <Tabs style={{ marginBottom: 15 }} value={value} aria-label="basic tabs example"  onChange={handleChange}>
+        <Tab label="Новые" onClick={getNewPosts} value={'one'}/>
+        <Tab label="Популярные" onClick={getSortedPosts} value={'two'} />
       </Tabs>
       <Grid container spacing={4}>
         <Grid xs={8} item>
-          {(isPostLoading ? [...Array(5)]:posts.items).map((obj, index) =>
+          {(isPostLoading ? [...Array(5)]:sorPosts).map((obj, index) =>
            isPostLoading ? (
            <Post key ={index} isLoading = {true}/>
            ):(
