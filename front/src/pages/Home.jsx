@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect ,useMemo,useState} from 'react';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Grid from '@mui/material/Grid';
@@ -7,8 +7,7 @@ import { TagsBlock } from '../components/TagsBlock';
 import { CommentsBlock } from '../components/CommentsBlock';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchPosts, fetchTags } from '../redux/slices/posts';
-import { useState } from 'react';
-import { useMemo } from 'react';
+
 
 export const Home = () => {
   const dispatch = useDispatch()
@@ -16,6 +15,16 @@ export const Home = () => {
   const userData = useSelector(state => state.auth.data)
   const [sort, setSort] = useState(false)
   const [value, setValue] = useState('one');
+  const [selectTag, setSelectTag] = useState('')
+
+  const handleSelect = (s) =>{
+    setSelectTag(s)
+  }
+
+  const filteredByTags = useMemo(() => posts.items.filter(e=>e.tags.includes(selectTag)),[selectTag])
+
+ console.log(filteredByTags, 't')
+
 
   const sortedPosts = useMemo(() => {
     const sortArr = [...posts.items]
@@ -30,22 +39,25 @@ export const Home = () => {
       return sortArr
   },[sort,posts])
 
- console.log(sortedPosts)
+
   const getSortedPosts = () => {
+    setSelectTag('')
     setSort(true)
   }
   const getNewPosts =() => {
-     setSort(false)
+    setSelectTag('')
+    setSort(false)
   }
 
   useEffect(() => {
    dispatch(fetchPosts())
    dispatch(fetchTags())
    setSort(false)
+   setSelectTag('')
   },[])
 
   const sorPosts = sort ? sortedPosts : posts.items
-  console.log(sorPosts, 'new sort')
+  const fullPosts = selectTag ? filteredByTags : sorPosts
 
   const isPostLoading = posts.status === 'loading'
   const isTagsLoading =  tags.status === 'loading'
@@ -61,7 +73,7 @@ export const Home = () => {
       </Tabs>
       <Grid container spacing={4}>
         <Grid xs={8} item>
-          {(isPostLoading ? [...Array(5)]:sorPosts).map((obj, index) =>
+          {(isPostLoading ? [...Array(5)]:fullPosts).map((obj, index) =>
            isPostLoading ? (
            <Post key ={index} isLoading = {true}/>
            ):(
@@ -80,7 +92,7 @@ export const Home = () => {
           ))}
         </Grid>
         <Grid xs={4} item>
-          <TagsBlock items={tags.items} isLoading={isTagsLoading} />
+          <TagsBlock items={tags.items} isLoading={isTagsLoading} handleSelect={handleSelect} filteredByTags={filteredByTags} />
           <CommentsBlock
             items={[
               {

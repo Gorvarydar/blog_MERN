@@ -30,9 +30,7 @@ export const Post = ({
   if (isLoading) {
     return <PostSkeleton />;
   }
-  console.log(imageUrl, 'img from post')
-
-
+ 
   const onClickRemove = () => {
     dispatch(fetchRemovePost(id))
   };

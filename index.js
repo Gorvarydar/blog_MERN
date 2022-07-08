@@ -29,8 +29,6 @@ const upload = multer({storage})
 
 app.post('/upload', upload.single('image'), (req, res) => {
     try{
-        console.log(req.file.originalname)
-        console.log('uploads req')
         res.json({
         url:`/uploads/${req.file.originalname}`
     }) 

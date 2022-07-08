@@ -6,15 +6,13 @@ class PostController {
             const doc = new PostModel({
                 title:req.body.title,
                 text:req.body.text,
-                tags:req.body.tags,
+                tags:req.body.tags.split(','),
                 viewsCount:req.body.viewsCount,
                 user:req.userId,
                 imageUrl:req.body.imageUrl,
             })
-            console.log(req.body)
             const post = await doc.save()
             res.json(post)
-
         } catch (err) {
             console.log(err, 'badreq')
             res.status(403).json({message:'can not create a post'})
@@ -32,14 +30,12 @@ class PostController {
                 {
                 title:req.body.title,
                 text:req.body.text,
-                tags:req.body.tags,
+                tags:req.body.tags.split(','),
                 viewsCount:req.body.viewsCount,
                 user:req.userId,
                 imageUrl:req.body.imageUrl,
             })
-           
            res.json({message:'updated post'})
-
         } catch (err) {
             console.log(err, 'badreq')
             res.status(403).json({message:'can not create a post'})
@@ -48,8 +44,9 @@ class PostController {
     }
     async getTags (req, res) {
         try{
-            const posts = await PostModel.find().limit(5).exec()
-            const tags = posts.map(i => i.tags).flat().slice(0, 5)
+            const posts = await PostModel.find().limit(7).exec()
+            const tags = Array.from(new Set((posts.map(i => i.tags).flat()).slice(0, 7)))
+            
             res.json(tags)
          } catch (err) {
              res.status(403).json({message:"tags didnt find"})
@@ -59,9 +56,7 @@ class PostController {
     async getAll (req, res) {
         try{
             const {type} = req.query
-            console.log(req, 'this is type')
            const posts = await PostModel.find({}).sort({createdAt:'descending'}).populate('user').exec()
-           console.log(posts) 
            res.json(posts)
         } catch (err) {
             res.status(403).json({message:"post didnt find"})
@@ -84,7 +79,6 @@ class PostController {
    async  getOne (req, res) {
         try{
             const postId = req.params.id
-            console.log('id', postId)
          PostModel.findOneAndUpdate(
             {
                 _id:postId
@@ -100,14 +94,12 @@ class PostController {
                     console.log(err)
                     return res.status(400).json({message:'can not get a post'})
                 }
-                console.log('doc', doc)
                 if(!doc) {
                     return res.status(403).json({message:'post didn`t find'})
                 }
                res.json(doc) 
             } 
         ).populate('user')
-      
         } catch (err) {
             res.status(403).json({message:'error request'})
         }
@@ -126,7 +118,6 @@ class PostController {
                     console.log(err)
                     return res.status(400).json({message:'can not delete a post'})
                 }
-                console.log('doc', doc)
                 if(!doc) {
                     return res.status(403).json({message:'post didn`t find'})
                 }
@@ -138,8 +129,6 @@ class PostController {
             res.status(403).json({message:'delete error request'})
         }
     }
-
-    
 }
 
 export default new PostController
