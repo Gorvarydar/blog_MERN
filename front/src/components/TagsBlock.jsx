@@ -18,6 +18,7 @@ export const TagsBlock = ({ items, isLoading = true ,handleSelect}) => {
           <a
             style={{ textDecoration: "none", color: "black" }}
             // href={`/tags/${name}`} 
+            key={i}
             onClick={() => handleSelect(name)}
           >
             <ListItem key={i} disablePadding>

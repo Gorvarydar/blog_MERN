@@ -10,6 +10,7 @@ class PostController {
                 viewsCount:req.body.viewsCount,
                 user:req.userId,
                 imageUrl:req.body.imageUrl,
+                comments:[]
             })
             const post = await doc.save()
             res.json(post)
@@ -25,28 +26,29 @@ class PostController {
             const postId = req.params.id
            await PostModel.findOneAndUpdate(
                 {
-                    id:postId
+                    _id:postId
                 },
                 {
                 title:req.body.title,
                 text:req.body.text,
-                tags:req.body.tags.split(','),
+                tags:req.body.tags,
                 viewsCount:req.body.viewsCount,
                 user:req.userId,
                 imageUrl:req.body.imageUrl,
+                comments:req.body.comments
             })
+            console.log(req,'req of patch')
            res.json({message:'updated post'})
         } catch (err) {
             console.log(err, 'badreq')
-            res.status(403).json({message:'can not create a post'})
-
+            res.status(403).json({message:'can not update a post'})
         }
     }
+
     async getTags (req, res) {
         try{
             const posts = await PostModel.find().limit(7).exec()
             const tags = Array.from(new Set((posts.map(i => i.tags).flat()).slice(0, 7)))
-            
             res.json(tags)
          } catch (err) {
              res.status(403).json({message:"tags didnt find"})
@@ -63,18 +65,26 @@ class PostController {
         }
     }
 
-    // async getFiles (req, res) => {
-    //     try{
-    //         const {sort} = req.query
-    //         let postsFiles
-    //         switch(sort) {
-    //             case 'new':
-    //                 files = 
-    //         }
-    //     }catch(err) {
+    async addComment (req,res) {
+        try{
+            const postId = req.params.id
+            console.log(postId,'postId from update comment')
+            await PostModel.findOneAndUpdate(
+                 {
+                     _id:postId
+                 },
+                 {
+                 comments:req.body.comments
+                },
+                // {
+                // returnDocument:'after'}
+                )
+            res.json({message:'updated comment'})
 
-    //     }
-    // }
+        } catch(err) {
+            res.status(403).json({message:'can`t add comment'})
+        }
+    }
 
    async  getOne (req, res) {
         try{

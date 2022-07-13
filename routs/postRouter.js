@@ -11,6 +11,7 @@ router.get('/tags',  PostController.getTags)
 router.get('/:id',  PostController.getOne)
 router.delete('/:id', checkAuth, PostController.removePost)
 router.patch('/:id',checkAuth, PostController.updatePost)
+router.patch('/:id/comm', PostController.addComment)
 
 
 export default router

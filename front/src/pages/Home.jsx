@@ -23,9 +23,6 @@ export const Home = () => {
 
   const filteredByTags = useMemo(() => posts.items.filter(e=>e.tags.includes(selectTag)),[selectTag])
 
- console.log(filteredByTags, 't')
-
-
   const sortedPosts = useMemo(() => {
     const sortArr = [...posts.items]
     sortArr.sort(function(e, i) {
@@ -38,7 +35,6 @@ export const Home = () => {
       })
       return sortArr
   },[sort,posts])
-
 
   const getSortedPosts = () => {
     setSelectTag('')
@@ -85,7 +81,7 @@ export const Home = () => {
               user={obj.user}
               createdAt={obj.createdAt}
               viewsCount={obj.viewsCount}
-              commentsCount={3}
+              commentsCount={obj.comments.length}
               tags={obj.tags}
               isEditable={userData?._id === obj.user._id}
             />
@@ -93,25 +89,10 @@ export const Home = () => {
         </Grid>
         <Grid xs={4} item>
           <TagsBlock items={tags.items} isLoading={isTagsLoading} handleSelect={handleSelect} filteredByTags={filteredByTags} />
-          <CommentsBlock
-            items={[
-              {
-                user: {
-                  fullName: 'Вася Пупкин',
-                  avatarUrl: 'https://mui.com/static/images/avatar/1.jpg',
-                },
-                text: 'Это тестовый комментарий',
-              },
-              {
-                user: {
-                  fullName: 'Иван Иванов',
-                  avatarUrl: 'https://mui.com/static/images/avatar/2.jpg',
-                },
-                text: 'When displaying three lines or more, the avatar is not aligned at the top. You should set the prop to align the avatar at the top',
-              },
-            ]}
+          {/* <CommentsBlock
+        
             isLoading={false}
-          />
+          /> */}
         </Grid>
       </Grid>
     </>

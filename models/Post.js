@@ -19,6 +19,10 @@ const PostShema = new mongoose.Schema({
         requred:true,
         default:0
     },
+    comments:{
+        type:Array,
+        default:[]
+    },
     user: {
         type:mongoose.Schema.Types.ObjectId,
         ref:'User',
